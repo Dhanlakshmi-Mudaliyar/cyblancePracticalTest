@@ -1,0 +1,38 @@
+<!-- user_list.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>User List</h1>
+<a href="{% url 'user-create' %}" class="btn btn-primary">Add User</a>
+<table class="table">
+  <!-- Table headers -->
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Address</th>
+      <th>Hobbies</th>
+      <th>Gender</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <!-- Table data -->
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.phone_no }}</td>
+      <td>{{ user.address }}</td>
+      <td>{{ user.hobbies.all|join:'' }}</td>
+      <td>{{ user.gender }}</td>
+      <td>
+        <a href="{% url 'user-update' user.pk %}" class="btn btn-info">Edit</a>
+        <a href="{% url 'user-delete' user.pk %}" class="btn btn-danger">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
