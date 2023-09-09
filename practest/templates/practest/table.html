@@ -279,24 +279,18 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>John Doe</td>
-                <td>johndoe@example.com</td>
-                <td>123-456-7890</td>
-                <td>123 Main St</td>
-                <td>Dancing, Singing</td>
-                <td>Male</td>
-                <td> </td>
-            </tr>
-            <tr>
-                <td>Dhanno</td>
-                <td>admin@admin.com</td>
-                <td>123-456-7891</td>
-                <td>Hatkeshwar</td>
-                <td>Dancing, Cooking, Reading</td>
-                <td>Female</td>
-                <td> </td>
-            </tr>
+        {% for user in records %}
+        <tr>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.phone }}</td>
+      <td>{{ user.address }}</td>
+      <td>{{ user.hobbies}}</td>
+      <td>{{ user.gender }}</td>
+      <td>
+      </td>
+    </tr>
+    {% endfor %}
         </tbody>
     </table>
 
