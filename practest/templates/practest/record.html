@@ -25,10 +25,6 @@
       <td>{{ user.address }}</td>
       <td>{{ user.hobbies.all|join:'' }}</td>
       <td>{{ user.gender }}</td>
-      <td>
-        <a href="{% url 'user-update' user.pk %}" class="btn btn-info">Edit</a>
-        <a href="{% url 'user-delete' user.pk %}" class="btn btn-danger">Delete</a>
-      </td>
     </tr>
     {% endfor %}
   </tbody>

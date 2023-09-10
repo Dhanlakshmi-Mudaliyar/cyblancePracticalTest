@@ -281,6 +281,7 @@
         <tbody>
         {% for user in records %}
         <tr>
+            {{user.id}}
       <td>{{ user.name }}</td>
       <td>{{ user.email }}</td>
       <td>{{ user.phone }}</td>
@@ -288,6 +289,8 @@
       <td>{{ user.hobbies}}</td>
       <td>{{ user.gender }}</td>
       <td>
+          <input type="button" class="edit" name="edit" value="Edit" data-sid="{{user.id}}">
+          <input type="button" class="btn-delete" name="delete" value="Delete">
       </td>
     </tr>
     {% endfor %}
@@ -358,6 +361,22 @@
 
         // Initialize pagination
         updatePagination();
+
+        //Delete the Record
+        $("#tbody").on("click",".btn-delete", function(){
+        console.log("Delete the Record");
+        let id = $(this).attr("data-rid")
+        mydata = {rid:id}
+        mythis = $(this)
+        $.ajax({
+        url:'person_delete',
+        method: "POST",
+        data : mydata,
+        success : function(data){
+            colog(data)
+        }
+        })
+        })
     </script>
 </body>
 </html>

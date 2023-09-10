@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 import json
+from django.contrib.auth.models import AbstractUser
 
 class Person(models.Model):
     GENDER = (('male','Male'),
@@ -13,6 +14,18 @@ class Person(models.Model):
     address = models.TextField()
     gender = models.CharField(max_length=10, choices=GENDER)
     hobbies = models.TextField(blank=True, null=True, default='{}')
+
+class CustomUser(AbstractUser):
+    email = models.EmailField('email address', unique=True)
+    first_name = models.CharField('First Name', max_length=255, blank=True,null=False)
+    last_name = models.CharField('Last Name', max_length=255, blank=True,
+                                 null=False)
+    access_token = models.CharField(max_length=255)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return f"{self.email} - {self.first_name} {self.last_name}"
 
     # def save(self, *args, **kwargs):
     #     # print(self.data)
