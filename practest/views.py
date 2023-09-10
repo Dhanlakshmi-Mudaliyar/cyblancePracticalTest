@@ -4,15 +4,18 @@ from practest.models import Person
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import UserSerializer
+# from .serializers import UserSerializer
 from django.views.decorators.csrf import csrf_exempt
 import ast
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate , login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import NewUserForm
-
+# from .forms import NewUserForm
+from practest.models import PractTestUsers
+from django.contrib.auth.hashers import check_password,make_password
+from django.core import serializers
+import json
 def record_list(request):
     records = Person.objects.all()
     hobby_arr = []
@@ -68,34 +71,50 @@ def person_delete(request,id):
         return JsonResponse({'message': 'Record deleted Successfully'})
 
 # @api_view(['POST'])
-def register_user(request):
+@csrf_exempt
+def register_user_api(request):
     if request.method == "POST":
-        form = NewUserForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, "Registration successful.")
-            return redirect("login/")
-        messages.error(request, "Unsuccessful registration. Invalid information.")
-    form = NewUserForm()
-    return render(request=request, template_name="practest/register.html", context={"register_form": form})
+        first_name = request.POST.get("first_name","")
+        last_name = request.POST.get("last_name","")
+        email = request.POST.get("email", "")
+        password = request.POST.get("password", "")
+        if not first_name or not last_name or not email or not password:
+            return JsonResponse({"success":True,"message":"All fiedls are mandatory"})
+        password = make_password(password)
+        User = PractTestUsers.objects.filter(email=email).first()
+        if(User):
+            return JsonResponse({"success": False, "message": "User Already Registered"})
+        p1 = PractTestUsers()
+        p1.first_name = first_name
+        p1.last_name = last_name
+        p1.email = email
+        p1.password = password
+        p1.save()
+        return JsonResponse({"success":True,"messages":"User Registered Successfully"})
+    return render(request=request, template_name="practest/register.html")
 
+@csrf_exempt
+def register_user(request):
+    return render(request=request, template_name="practest/register.html")
 
+@csrf_exempt
+def user_login_api(request):
+    if request.method == "POST":
+        email = request.POST.get("email", "")
+        password = request.POST.get("password", "")
+        if not email or not password:
+            return JsonResponse({"success": True, "message": "All fiedls are mandatory"})
+        User = PractTestUsers.objects.filter(email=email).first()
+        if (not User):
+            return JsonResponse({"success": False, "message": "User Not Registered"})
+        if(not check_password(password, User.password)):
+            return JsonResponse({"success": False, "message": "password not matched"})
+        serialized_obj = serializers.serialize('json', [User])
+        serialized_obj1 = json.loads(serialized_obj)
+        return JsonResponse({"success": True, "message": "Login successFullly","User":serialized_obj1})
+    return render(request=request, template_name="practest/login.html")
+
+@csrf_exempt
 def user_login(request):
-	if request.method == "POST":
-		form = AuthenticationForm(request, data=request.POST)
-		if form.is_valid():
-			username = form.cleaned_data.get('username')
-			password = form.cleaned_data.get('password')
-			user = authenticate(username=username, password=password)
-			if user is not None:
-				login(request, user)
-				messages.info(request, f"You are now logged in as {username}.")
-				return redirect("practest")
-			else:
-				messages.error(request,"Invalid username or password.")
-		else:
-			messages.error(request,"Invalid username or password.")
-	form = AuthenticationForm()
-	return render(request=request, template_name="practest/login.html", context={"login_form":form})
+    return render(request=request, template_name="practest/login.html")
 # Create your views here.
