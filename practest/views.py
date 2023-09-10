@@ -57,10 +57,9 @@ def person_update(request,id):
     return JsonResponse({"success":True,"message":"Person Data Updated successfully"})
 
 @csrf_exempt
-def person_delete(request):
+def person_delete(request,id):
     # handle validation
-    if request.method == 'POST':
-        id = request.POST.get("rid")
+    if request.method == 'DELETE':
         person = Person.objects.get(pk=id)
         print(person)
         person.delete()

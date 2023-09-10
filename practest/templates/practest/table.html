@@ -278,7 +278,7 @@
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="tbody">
         {% for user in records %}
         <tr>
             {{user.id}}
@@ -290,7 +290,7 @@
       <td>{{ user.gender }}</td>
       <td>
           <input type="button" class="edit" name="edit" value="Edit" data-sid="{{user.id}}">
-          <input type="button" class="btn-delete" name="delete" value="Delete">
+          <input type="button" class="btn-delete" name="delete" value="Delete" data-sid="{{user.id}}">
       </td>
     </tr>
     {% endfor %}
@@ -365,15 +365,23 @@
         //Delete the Record
         $("#tbody").on("click",".btn-delete", function(){
         console.log("Delete the Record");
-        let id = $(this).attr("data-rid")
+        let id = $(this).attr("data-sid")
+        console.log(id,"id")
         mydata = {rid:id}
         mythis = $(this)
+        let url = 'delete/'+id;
         $.ajax({
-        url:'person_delete',
-        method: "POST",
-        data : mydata,
-        success : function(data){
-            colog(data)
+        url:url,
+        method: "DELETE",
+       success : function(data){
+            console.log(data)
+            if(data.success){
+            console.log("Record Deleted")
+            $(mythis).closest("tr").fadeOut();
+            }
+            else{
+            console.log("Record wasn't deleted")
+            }
         }
         })
         })
